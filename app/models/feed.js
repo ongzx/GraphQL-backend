@@ -1,9 +1,20 @@
-var db = require('../db');
+import db from '../../config/db';
+import Sequelize from 'sequelize';
+import uuidGenerator from '../../helpers/uuid-generator';
 var sequelize = db.sequelize;
-var Sequelize = db.Sequelize;
 var User = require('./user');
+import _ from 'lodash';
 
-var Feed = sequelize.define('Feeds', {
+const tableName = 'Feeds';
+
+var Feed = sequelize.define(tableName, {
+	uuid: {
+		type: Sequelize.UUID,
+		defaultValue: () => {
+			return uuidGenerator.generate(tableName)
+		},
+		primaryKey: true,
+	},
 	title: {
 		type: Sequelize.STRING
 	}, 
@@ -25,7 +36,16 @@ var Feed = sequelize.define('Feeds', {
     photo: {
         type: Sequelize.STRING
     }
-}, { freezeTableName: true });
+}, { 
+	freezeTableName: true,
+	collate: 'utf8_general_ci',
+	instanceMethods: {
+		toJSON: () => {
+			const privateAttributes = ['createdAt', 'updatedAt'];
+			return _.omit(this.dataValues, privateAttributes);
+		}
+	} 
+});
 
 
 // Feed.belongsTo(User);

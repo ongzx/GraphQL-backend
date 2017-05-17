@@ -7,7 +7,7 @@ import {
     GraphQLNonNull
 } from 'graphql';
 
-import db from './app/db';
+import db from './config/db';
 import Users from './app/models/user';
 import Feeds from './app/models/feed';
 

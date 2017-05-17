@@ -1,12 +1,22 @@
-import db from '../db';
+import db from '../../config/db';
+import Sequelize from 'sequelize';
 import Feed from './feed';
 import _ from 'lodash';
 import Faker from 'faker';
+import uuidGenerator from '../../helpers/uuid-generator';
 
 let sequelize = db.sequelize;
-let Sequelize = db.Sequelize;
 
-var User = sequelize.define('Users', {
+const tableName = 'Users';
+
+var User = sequelize.define(tableName, {
+	uuid: {
+		type: Sequelize.UUID,
+		defaultValue: () => {
+			return uuidGenerator.generate(tableName)
+		},
+		primaryKey: true,
+	},
 	username: {
 		type: Sequelize.STRING
 	}, 
@@ -25,10 +35,22 @@ var User = sequelize.define('Users', {
 	isAdmin: {
 		type: Sequelize.BOOLEAN
 	},
+	facebookId: {
+		type: Sequelize.STRING
+	},
 	token: {
 		type: Sequelize.STRING(1200)
 	}
-}, { freezeTableName: true });
+}, { 
+	freezeTableName: true,
+	collate: 'utf8_general_ci',
+	instanceMethods: {
+		toJSON: () => {
+			const privateAttributes = ['password', 'createdAt', 'updatedAt'];
+			return _.omit(this.dataValues, privateAttributes);
+		}
+	}
+});
 
 User.hasMany(Feed);
 Feed.belongsTo(User);
@@ -43,6 +65,7 @@ sequelize.sync({force: true})
 				email: Faker.internet.email(),
 				password: Faker.internet.password(),
 				isAdmin: false,
+				facebookId: '',
 				token: ''
 			}).then(user => {
 				return user.createFeed({

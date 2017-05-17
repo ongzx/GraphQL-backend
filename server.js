@@ -1,4 +1,3 @@
-
 var express = require('express');
 var apiRoutes = express.Router();
 var app = express();
@@ -11,20 +10,20 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var expressJWT = require('express-jwt');
 
+import Sequelize from 'sequelize';
 import GraphHTTP from 'express-graphql';
 import schema from './schema';
 import {graphql} from 'graphql';
+import env from './config/env';
 
-var db = require('./app/db');
+import db from './config/db';
 var sequelize = db.sequelize;
-var Sequelize = db.Sequelize;
 
 var User = require('./app/models/user');
 
 var jwt = require('jsonwebtoken');
-var config = require('./config');
 
-app.set('superSecret', config.secret);
+app.set('superSecret', env.secret);
 
 app.use(morgan('dev'));
 app.use(cookieParser());

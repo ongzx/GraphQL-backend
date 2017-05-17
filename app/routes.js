@@ -1,4 +1,4 @@
-var db = require('./db');
+import db from '../config/db';
 var sequelize = db.sequelize;
 var Sequelize = db.Sequelize;
 
@@ -70,7 +70,7 @@ module.exports = function(app, apiRoutes, jwt) {
 					.then(function() {
 						res.json({
 							success: true,
-							message: 'Authentication succesful',
+							message: 'Authentication successful',
 							user: user,
 							token: token
 						})
@@ -80,7 +80,6 @@ module.exports = function(app, apiRoutes, jwt) {
 			}
 		});
 	});
-
 
 	apiRoutes.use(function(req, res, next) {
 		var token = req.body.token || req.query.token || req.headers['x-access-token'];
@@ -105,7 +104,6 @@ module.exports = function(app, apiRoutes, jwt) {
 			});
 		}
 	});
-
 
 	apiRoutes.get('/', function(req,res) {
 		res.json({message:'Welcome to the coolest API on earth!'});
